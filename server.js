@@ -4,11 +4,18 @@ var express = require('express'),
   mongoose = require('mongoose'),
   Task = require('./api/models/todoListModel'), //created model loading here
   bodyParser = require('body-parser'),
-  routes = require('./api/routes/todoListRoutes');
+  routes = require('./api/routes/todoListRoutes'),
+  cfenv = require('cfenv'),
+  oAppEnv = cfenv.getAppEnv();
   
 // mongoose instance connection url connection
 mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://localhost/Tododb'); 
+
+if(oAppEnv.isLocal === true){
+   mongoose.connect('mongodb://localhost/Tododb'); 
+}else{
+   mongoose.connect(oAppEnv.services.mongodb[0].credentials.uri); 
+}
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -18,6 +25,6 @@ app.use(function(req, res) {
   res.status(404).send({url: req.originalUrl + ' not found'})
 });
 
-app.listen(port);
-
-console.log('todo list RESTful API server started on: ' + port);
+app.listen(oAppEnv.port, function(){
+    console.log('todo list RESTful API server started on: ' + oAppEnv.url);
+});

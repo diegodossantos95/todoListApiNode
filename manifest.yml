@@ -1,0 +1,10 @@
+---
+applications:
+- name: todo-list-api-i848202
+  buildpack: nodejs_buildpack
+  command: node server.js
+  memory: 128M
+  disk_quota: 128M
+  host: todo-list-api-i848202
+  services:
+  - mongodb-s01
